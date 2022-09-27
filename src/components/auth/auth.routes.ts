@@ -1,16 +1,20 @@
 import { Router } from "express";
-import * as authServices from './auth.service'
 import passport from 'passport'
+import {validarSchemas} from '../../libs/validarSchemas'
+import * as authServices from './auth.service'
+import * as authSchemas from './auth.schemas'
 
 const routerAuth = Router()
 
 routerAuth.post(
     '/signup',
+    validarSchemas(authSchemas.createUser),
     authServices.signup
 )
 
 routerAuth.post(
     '/login',
+    validarSchemas(authSchemas.loginUser),
     authServices.login
 )
 

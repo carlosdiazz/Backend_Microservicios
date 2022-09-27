@@ -10,16 +10,45 @@ export const BoomErrorHandler = (err, _req: Request, res: Response, next: NextFu
             error: err.output.payload.error,
         })
     }else{
-        next();
+        next(err);
+    }
+}
+
+//!Arregalr el envio de errores de Mongo
+export const mongoErrorHandler = (err, _req: Request, res: Response, next: NextFunction) => {
+    if(err.name==='MongoServerError' || err.name === 'ValidationError' || err.name === 'CastError'){
+        res.status(409).json({
+            data:err.name,
+            message: err.message,
+            statusCode: 409,
+            error: true,
+
+        })
+    }else{
+        next(err);
+    }
+}
+
+export const jsonErrorHandler = (err, _req: Request, res: Response, next: NextFunction) => {
+    if(err.message.startsWith('Unexpected token')){
+        res.status(400).json({
+            data:err.name,
+            message: err.message,
+            statusCode: 409,
+            error: true,
+
+        })
+    }else{
+        next(err);
     }
 }
 
 export const errorResponse = (err, _req: Request, res: Response, _next: NextFunction) => {
-
+    //console.log(err)
     res.status(500).json({
         data: err,
-        message: err.message,
+        message: err.message || '',
         statusCode: 500,
-        error: err.stack
+        error: err.name || ''
     });
 };

@@ -35,6 +35,8 @@ routerApi(app)
 
 //Middlewares de error
 app.use(errorHandle.BoomErrorHandler)
+app.use(errorHandle.jsonErrorHandler)
+app.use(errorHandle.mongoErrorHandler)
 
 app.use(errorHandle.errorResponse)
 
