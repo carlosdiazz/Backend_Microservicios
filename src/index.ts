@@ -2,7 +2,6 @@ import {PORT_APP} from './config/config'
 import app from './app/app'
 import {connectMongoDb} from './database/configDataBase'
 
-
 const main = async ()=>{
     try{
         console.log(`🔥🔥🔥🔥🔥Subiendo el servidor🔥🔥🔥🔥🔥`)

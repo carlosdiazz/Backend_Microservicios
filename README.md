@@ -18,6 +18,8 @@ Este sera un proyecto de prueba de un backend, Usaremos las siguientes tencologi
 #### Subir la imagen de MongoDB Docker
 
 `$ docker-compose up -d`
+`$ pm2 start ecosystem.config.js`
+`$ redis-commander`
 #### Comando para Desarrollo
 
 `$ npm run dev`
