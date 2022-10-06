@@ -18,6 +18,7 @@ export const signup = async(req: Request, res: Response, next: NextFunction ) =>
             name: data.name,
             nickname: data.nickname,
             email: data.email,
+            is_staff: data.is_staff,
             password: passwordEncrypted
         })
 

@@ -1,9 +1,9 @@
 version: '3.5'
 
 services:
-  mongo1:
+  mongo:
     image: mongo
-    container_name: mongo1
+    container_name: Mongo_Escuela
     restart: always
     environment:
       - MONGO_INITDB_ROOT_USERNAME=root

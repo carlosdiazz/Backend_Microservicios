@@ -3,7 +3,7 @@ import passport from 'passport'
 import {validarSchemas} from '../../libs/validarSchemas'
 import * as authServices from './auth.service'
 import * as authSchemas from './auth.schemas'
-import {buscarEnCache} from '../../middlewares/redis'
+//import {buscarEnCache} from '../../middlewares/redis'
 
 const routerAuth = Router()
 
@@ -20,10 +20,10 @@ routerAuth.post(
 )
 
 //Te envia el nickname y te devuelve el token
-routerAuth.post(
+routerAuth.get(
     '/me',
     passport.authenticate('jwt', {session: false}),
-    buscarEnCache,
+    //buscarEnCache,
     authServices.profileMe
 )
 

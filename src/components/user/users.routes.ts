@@ -18,16 +18,19 @@ userRouters.get(
 
 userRouters.post(
     '/',
+    validarSchemas(userSchema.createUserSchema),
     userService.createUser
 )
 
 userRouters.put(
     '/:id',
+    validarSchemas(userSchema.updateUserSchema),
     userService.updateUser
 )
 
 userRouters.delete(
     '/:id',
+    validarSchemas(userSchema.deleteUserSchema),
     userService.deleteUser
 )
 

@@ -21,6 +21,9 @@ class Auth {
     @prop({required: true})
     password: string
 
+    @prop({required: true})
+    is_staff: boolean
+
 }
 
 
