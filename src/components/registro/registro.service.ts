@@ -1,10 +1,18 @@
+import boom from '@hapi/boom'
 import {Request,Response, NextFunction} from 'express'
 import {successResponse} from '../../libs/response'
+import RegistroModel from './registro.model'
+import {comprobarUser} from '../../libs/ComprobarClaveSecundaria'
 
 export const getOneRegistro = async(req:Request, res: Response, next: NextFunction ) => {
     try{
+        const {id} = req.params
+        const user = await RegistroModel.findById(id).populate('id_user','name ')
+        if(!user){
+            throw boom.notFound("Este regsitro no fue encontrado")
+        }
 
-        successResponse(req,res, {}, 'Lista de un registro', 200)
+        successResponse(req,res, user, 'Lista de un registro', 200)
     }catch(err){
         next(err)
     }
@@ -12,8 +20,11 @@ export const getOneRegistro = async(req:Request, res: Response, next: NextFuncti
 
 export const getAllRegistro = async(req:Request, res: Response, next: NextFunction ) => {
     try{
-
-        successResponse(req,res, {}, 'Lista de todos los registro', 200)
+        const registros = await RegistroModel.find().populate('id_user','name ')
+        if(!registros){
+            throw boom.badData("Error al buscar los registro")
+        }
+        successResponse(req,res, registros, 'Lista de todos los registro', 200)
     }catch(err){
         next(err)
     }
@@ -21,8 +32,21 @@ export const getAllRegistro = async(req:Request, res: Response, next: NextFuncti
 
 export const createRegistro = async(req:Request, res: Response, next: NextFunction ) => {
     try{
+        const {id_user, date, horas} = req.body
 
-        successResponse(req,res, {}, 'Crear un registro', 200)
+        await comprobarUser(id_user)
+        const newRegistro = new RegistroModel({
+            date: date,
+            horas: horas,
+            id_user: id_user
+        })
+
+        const registroSaved = await newRegistro.save()
+        if(!registroSaved){
+            throw boom.badData("Error al crear el registro")
+        }
+
+        successResponse(req,res, registroSaved, 'Crear un registro', 200)
     }catch(err){
         next(err)
     }
@@ -30,8 +54,17 @@ export const createRegistro = async(req:Request, res: Response, next: NextFuncti
 
 export const deleteRegistro = async(req:Request, res: Response, next: NextFunction ) => {
     try{
+        const {id} = req.params
+        const user = await RegistroModel.findById(id).populate('id_user','name ')
+        if(!user){
+            throw boom.notFound("Este regsitro no fue encontrado")
+        }
+        const userDelete = await RegistroModel.findByIdAndRemove(id)
+        if(!userDelete){
+            throw boom.badData("Error al borrar el registro")
+        }
 
-        successResponse(req,res, {}, 'Eliminar un registro', 200)
+        successResponse(req,res, user, 'Eliminar un registro', 200)
     }catch(err){
         next(err)
     }
@@ -40,7 +73,27 @@ export const deleteRegistro = async(req:Request, res: Response, next: NextFuncti
 export const actualizarRegistro = async(req:Request, res: Response, next: NextFunction ) => {
     try{
 
-        successResponse(req,res, {}, 'Actualizar un registro', 200)
+        const {id} = req.params
+        const {id_user, date, horas} = req.body
+        if(id_user){
+            await comprobarUser(id_user)
+        }
+
+        const user = await RegistroModel.findById(id)
+        if(!user){
+            throw boom.notFound("Este regsitro no fue encontrado")
+        }
+        const userUpdate = await RegistroModel.findByIdAndUpdate(id, {
+            date: date,
+            horas: horas,
+            id_user: id_user
+        }, {new: true})
+
+        if(!userUpdate){
+            throw boom.badData("No fue posible actualizar el registro")
+        }
+
+        successResponse(req,res, userUpdate, 'Actualizar un registro', 200)
     }catch(err){
         next(err)
     }

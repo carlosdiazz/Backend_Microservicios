@@ -2,7 +2,7 @@ import {prop, getModelForClass, modelOptions,} from '@typegoose/typegoose'
 import {Departamento_Users} from '../../libs/Enums'
 
 @modelOptions({schemaOptions: {timestamps: true}})
-class User {
+export class User {
 
     @prop({required: true}) //Mongoose
     name: string      //TypeScript

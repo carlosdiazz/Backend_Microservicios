@@ -23,3 +23,6 @@ Este sera un proyecto de prueba de un backend, Usaremos las siguientes tencologi
 #### Comando para Desarrollo
 
 `$ npm run dev`
+
+
+npx ts-node-dev publicar_numeros.ts 
