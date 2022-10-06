@@ -1,0 +1,14 @@
+_id: env_c577fee04ba646e0b6a3806c09b0f681
+type: Environment
+parentId: env_f747a47a5692b3251fb51a431e30f453885b1367
+modified: 1663986672064
+created: 1663986507794
+name: New Environment
+data:
+  URL_DEV: http://localhost:4300
+dataPropertyOrder:
+  "&":
+    - URL_DEV
+color: "#2bff00"
+isPrivate: false
+metaSortKey: 1663986507794

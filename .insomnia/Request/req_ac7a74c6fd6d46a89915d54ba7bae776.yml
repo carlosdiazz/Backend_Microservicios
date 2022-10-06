@@ -1,0 +1,21 @@
+_id: req_ac7a74c6fd6d46a89915d54ba7bae776
+type: Request
+parentId: fld_641df6677c0e449abad1b87a2b399820
+modified: 1665096151891
+created: 1665096066318
+url: "{{ _.URL_DEV }}/api/v1/registro/633f59c89e53872e0947d31d"
+name: deleteRegistros
+description: ""
+method: DELETE
+body: {}
+parameters: []
+headers: []
+authentication: {}
+metaSortKey: -1665095856169.75
+isPrivate: false
+settingStoreCookies: true
+settingSendCookies: true
+settingDisableRenderRequestBody: false
+settingEncodeUrl: true
+settingRebuildPath: true
+settingFollowRedirects: global

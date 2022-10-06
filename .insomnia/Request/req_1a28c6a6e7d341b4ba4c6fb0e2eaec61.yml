@@ -1,0 +1,21 @@
+_id: req_1a28c6a6e7d341b4ba4c6fb0e2eaec61
+type: Request
+parentId: fld_641df6677c0e449abad1b87a2b399820
+modified: 1665096147737
+created: 1665096055144
+url: "{{ _.URL_DEV }}/api/v1/registro/633f59c89e53872e0947d31d"
+name: updateRegistros
+description: ""
+method: PUT
+body: {}
+parameters: []
+headers: []
+authentication: {}
+metaSortKey: -1665095878967.5
+isPrivate: false
+settingStoreCookies: true
+settingSendCookies: true
+settingDisableRenderRequestBody: false
+settingEncodeUrl: true
+settingRebuildPath: true
+settingFollowRedirects: global

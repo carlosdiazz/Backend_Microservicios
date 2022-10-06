@@ -1,0 +1,21 @@
+_id: req_3d80d51c7730456490f91e5e2478c4d6
+type: Request
+parentId: fld_fffa57437f794bebba5fbcf86dac2c77
+modified: 1665095986591
+created: 1665095880360
+url: "{{ _.URL_DEV }}/api/v1/users/633f59279e53872e0947d310"
+name: updateUser
+description: ""
+method: PUT
+body: {}
+parameters: []
+headers: []
+authentication: {}
+metaSortKey: -1664778899286.25
+isPrivate: false
+settingStoreCookies: true
+settingSendCookies: true
+settingDisableRenderRequestBody: false
+settingEncodeUrl: true
+settingRebuildPath: true
+settingFollowRedirects: global

@@ -1,0 +1,30 @@
+_id: req_0becea4119bb458e8a0a8f01276dea36
+type: Request
+parentId: fld_61d09aa989524a3dbf884e5845137e4d
+modified: 1665095791456
+created: 1663986692762
+url: "{{ _.URL_DEV }}/api/v1/auth/login"
+name: Login
+description: ""
+method: POST
+body:
+  mimeType: application/json
+  text: |-
+    {
+    	"nickname":"carlos",
+    	"password":"12345678"
+    }
+parameters: []
+headers:
+  - name: Content-Type
+    value: application/json
+    id: pair_d84f0714c0b246c38a8804b7b117f10f
+authentication: {}
+metaSortKey: -1663814771089
+isPrivate: false
+settingStoreCookies: true
+settingSendCookies: true
+settingDisableRenderRequestBody: false
+settingEncodeUrl: true
+settingRebuildPath: true
+settingFollowRedirects: global

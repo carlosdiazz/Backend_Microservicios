@@ -1,0 +1,31 @@
+_id: req_f114307520044951a44eba3c45c5c3f2
+type: Request
+parentId: fld_61d09aa989524a3dbf884e5845137e4d
+modified: 1665095811710
+created: 1663986710589
+url: "{{ _.URL_DEV }}/api/v1/auth/me"
+name: ProfileME
+description: ""
+method: GET
+body:
+  mimeType: application/json
+  text: |-
+    {
+    	"hola":"hola"
+    }
+parameters: []
+headers:
+  - name: Content-Type
+    value: application/json
+    id: pair_e3f76ad391584e84bf86f72c3fbb44d8
+authentication:
+  type: bearer
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiQ2FybG9zIiwibmlja25hbWUiOiJjYXJsb3MiLCJlbWlhbCI6ImNhcmxvc0BtYWlsLmNvbSIsImlhdCI6MTY2NTA5NTc4NH0.wcqlhJ09ZIZLhzU5rXN1kTs0weoH8VSvJBrOAGO59_U
+metaSortKey: -1663728874379.5
+isPrivate: false
+settingStoreCookies: true
+settingSendCookies: true
+settingDisableRenderRequestBody: false
+settingEncodeUrl: true
+settingRebuildPath: true
+settingFollowRedirects: global
