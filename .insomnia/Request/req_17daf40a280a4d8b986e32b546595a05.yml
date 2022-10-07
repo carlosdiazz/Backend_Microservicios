@@ -1,7 +1,7 @@
 _id: req_17daf40a280a4d8b986e32b546595a05
 type: Request
 parentId: fld_641df6677c0e449abad1b87a2b399820
-modified: 1665096135677
+modified: 1665104919356
 created: 1665096075370
 url: "{{ _.URL_DEV }}/api/v1/registro"
 name: createRegistros
@@ -11,14 +11,17 @@ body:
   mimeType: application/json
   text: |-
     {
-    	"id_user":"633f59c19e53872e0947d31a",
     	"date":"10-10-2010",
-    	"horas":["23"]
+    	"tanda":"MATUTINA",
+    	"hora_entrada":"08:10",
+    	"hora_salida":"12:20",
+    	"id_user":"633f7a217402ff0746495502"
     }
 parameters: []
 headers:
   - name: Content-Type
     value: application/json
+    id: pair_11a951e4be4e43e597a58f87cd171f98
 authentication: {}
 metaSortKey: -1665095844770.875
 isPrivate: false
