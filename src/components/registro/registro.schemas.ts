@@ -7,8 +7,8 @@ const date = z.preprocess((arg) => {
     if (typeof arg == "string" || arg instanceof Date) return new Date(arg);
     else throw Error("No es una fecha valida")
   }, z.date());//!Falta esto
-const hora_entrada = z.string() //!Falta esto
-const hora_salida  = z.string()
+const hora_entrada = date //!Falta esto
+const hora_salida  = date
 const tanda = z.nativeEnum(Tandas_Users)
 
 export const createOneRegistro = z.object({

@@ -1,8 +1,9 @@
 import boom from '@hapi/boom'
 import {Request,Response, NextFunction} from 'express'
-import {successResponse} from '../../libs/response'
 import RegistroModel from './registro.model'
+import {successResponse} from '../../libs/response'
 import {comprobarUser} from '../../libs/ComprobarClaveSecundaria'
+import {calculoDeHora} from '../../libs/CalculoDeHora'
 import moment from 'moment'
 
 
@@ -42,11 +43,7 @@ export const createRegistro = async(req:Request, res: Response, next: NextFuncti
 
         await comprobarUser(id_user)
 
-        //!falta Crear funcion que haga un calculo de total de hora
-        const hora_1 = moment(hora_entrada)
-        const hora_2 = moment(hora_salida)
-        const minutos = hora_2.diff(hora_1 , 'minutes')
-        const total_hora = Math.round(minutos/60)
+        const calculo_hora = await calculoDeHora(hora_entrada, hora_salida)
 
         const newRegistro = new RegistroModel({
             date: date,
@@ -54,7 +51,7 @@ export const createRegistro = async(req:Request, res: Response, next: NextFuncti
             tanda: tanda,
             hora_entrada: hora_entrada,
             hora_salida: hora_salida,
-            total_hora: total_hora
+            total_hora: calculo_hora
         })
 
         const registroSaved = await newRegistro.save()
