@@ -1,0 +1,30 @@
+_id: req_17daf40a280a4d8b986e32b546595a05
+type: Request
+parentId: fld_641df6677c0e449abad1b87a2b399820
+modified: 1665096135677
+created: 1665096075370
+url: "{{ _.URL_DEV }}/api/v1/registro"
+name: createRegistros
+description: ""
+method: POST
+body:
+  mimeType: application/json
+  text: |-
+    {
+    	"id_user":"633f59c19e53872e0947d31a",
+    	"date":"10-10-2010",
+    	"horas":["23"]
+    }
+parameters: []
+headers:
+  - name: Content-Type
+    value: application/json
+authentication: {}
+metaSortKey: -1665095844770.875
+isPrivate: false
+settingStoreCookies: true
+settingSendCookies: true
+settingDisableRenderRequestBody: false
+settingEncodeUrl: true
+settingRebuildPath: true
+settingFollowRedirects: global

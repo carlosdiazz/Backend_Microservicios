@@ -1,0 +1,33 @@
+_id: req_50f7200770b1479f88716399a6cc249d
+type: Request
+parentId: fld_61d09aa989524a3dbf884e5845137e4d
+modified: 1665095782990
+created: 1663986564508
+url: "{{ _.URL_DEV }}/api/v1/auth/signup"
+name: Signup
+description: ""
+method: POST
+body:
+  mimeType: application/json
+  text: |-
+    {
+    	"name":"Carlos",
+    	"nickname":"carlos",
+    	"email":"carlos@mail.com",
+    	"password":"12345678",
+    	"is_staff":true
+    }
+parameters: []
+headers:
+  - name: Content-Type
+    value: application/json
+    id: pair_7819b87abcb549888a8055cc81e0fde0
+authentication: {}
+metaSortKey: -1663986564508
+isPrivate: false
+settingStoreCookies: true
+settingSendCookies: true
+settingDisableRenderRequestBody: false
+settingEncodeUrl: true
+settingRebuildPath: true
+settingFollowRedirects: global

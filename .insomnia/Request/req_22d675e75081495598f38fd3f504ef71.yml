@@ -1,0 +1,21 @@
+_id: req_22d675e75081495598f38fd3f504ef71
+type: Request
+parentId: fld_641df6677c0e449abad1b87a2b399820
+modified: 1665096036895
+created: 1665096015754
+url: "{{ _.URL_DEV }}/api/v1/registro"
+name: getAllRegistros
+description: ""
+method: GET
+body: {}
+parameters: []
+headers: []
+authentication: {}
+metaSortKey: -1665096015754
+isPrivate: false
+settingStoreCookies: true
+settingSendCookies: true
+settingDisableRenderRequestBody: false
+settingEncodeUrl: true
+settingRebuildPath: true
+settingFollowRedirects: global
