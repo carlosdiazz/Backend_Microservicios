@@ -1,16 +1,23 @@
 import {z} from 'zod';
+import {Tandas_Users} from '../../libs/Enums'
 
-const hora = z.string()
 const id = z.string({required_error: "Este no es un ID valido"}).regex(/^[0-9a-fA-F]{24}$/);
 const id_user = z.string({required_error: "Este no es un ID valido"}).regex(/^[0-9a-fA-F]{24}$/);
-const date = z.string() //!Falta esto
-const horas = z.array(hora) //!Falta esto
+const date = z.preprocess((arg) => {
+    if (typeof arg == "string" || arg instanceof Date) return new Date(arg);
+    else throw Error("No es una fecha valida")
+  }, z.date());//!Falta esto
+const hora_entrada = z.string() //!Falta esto
+const hora_salida  = z.string()
+const tanda = z.nativeEnum(Tandas_Users)
 
 export const createOneRegistro = z.object({
     body: z.object({
         id_user: id_user,
         date: date,
-        horas: horas
+        tanda: tanda,
+        hora_entrada: hora_entrada,
+        hora_salida: hora_salida
     })
 })
 
@@ -21,7 +28,6 @@ export const updateOneRegistro = z.object({
     body: z.object({
         id_user: id_user.optional(),
         date: date.optional(),
-        horas: horas.optional()
     })
 })
 

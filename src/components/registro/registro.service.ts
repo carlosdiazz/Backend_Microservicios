@@ -3,6 +3,8 @@ import {Request,Response, NextFunction} from 'express'
 import {successResponse} from '../../libs/response'
 import RegistroModel from './registro.model'
 import {comprobarUser} from '../../libs/ComprobarClaveSecundaria'
+import moment from 'moment'
+
 
 export const getOneRegistro = async(req:Request, res: Response, next: NextFunction ) => {
     try{
@@ -12,6 +14,10 @@ export const getOneRegistro = async(req:Request, res: Response, next: NextFuncti
             throw boom.notFound("Este regsitro no fue encontrado")
         }
 
+        const hora_1 = moment(user.hora_entrada)
+        const hora_2 = moment(user.hora_salida)
+        console.log(hora_1.format('YYYY-MM-DD HH:mm:ss'))
+        console.log(hora_2.format('YYYY-MM-DD HH:mm:ss'))
         successResponse(req,res, user, 'Lista de un registro', 200)
     }catch(err){
         next(err)
@@ -32,13 +38,23 @@ export const getAllRegistro = async(req:Request, res: Response, next: NextFuncti
 
 export const createRegistro = async(req:Request, res: Response, next: NextFunction ) => {
     try{
-        const {id_user, date, horas} = req.body
+        const {id_user, date, tanda, hora_entrada, hora_salida} = req.body
 
         await comprobarUser(id_user)
+
+        //!falta Crear funcion que haga un calculo de total de hora
+        const hora_1 = moment(hora_entrada)
+        const hora_2 = moment(hora_salida)
+        const minutos = hora_2.diff(hora_1 , 'minutes')
+        const total_hora = Math.round(minutos/60)
+
         const newRegistro = new RegistroModel({
             date: date,
-            horas: horas,
-            id_user: id_user
+            id_user: id_user,
+            tanda: tanda,
+            hora_entrada: hora_entrada,
+            hora_salida: hora_salida,
+            total_hora: total_hora
         })
 
         const registroSaved = await newRegistro.save()
@@ -46,7 +62,7 @@ export const createRegistro = async(req:Request, res: Response, next: NextFuncti
             throw boom.badData("Error al crear el registro")
         }
 
-        successResponse(req,res, registroSaved, 'Crear un registro', 200)
+        successResponse(req,res, registroSaved, 'Crear un registro', 201)
     }catch(err){
         next(err)
     }
@@ -74,7 +90,7 @@ export const actualizarRegistro = async(req:Request, res: Response, next: NextFu
     try{
 
         const {id} = req.params
-        const {id_user, date, horas} = req.body
+        const {id_user, date } = req.body
         if(id_user){
             await comprobarUser(id_user)
         }
@@ -85,7 +101,6 @@ export const actualizarRegistro = async(req:Request, res: Response, next: NextFu
         }
         const userUpdate = await RegistroModel.findByIdAndUpdate(id, {
             date: date,
-            horas: horas,
             id_user: id_user
         }, {new: true})
 

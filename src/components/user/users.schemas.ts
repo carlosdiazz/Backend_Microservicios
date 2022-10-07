@@ -1,11 +1,11 @@
 import {z} from 'zod';
-//import {Departamento_Users} from '../../libs/Enums'
+import {Departamento_Users} from '../../libs/Enums'
 
 const id = z.string({required_error: "Este no es un ID valido"}).regex(/^[0-9a-fA-F]{24}$/);
 const name = z.string()
 const cedula = z.number(z.string().min(11).max(11)) //! Falta esto
-//const departamento = z.nativeEnum(Departamento_Users)
-const departamento = z.string()
+const departamento = z.nativeEnum(Departamento_Users)
+//const departamento = z.string()
 
 export const createUserSchema = z.object({
     body: z.object({
