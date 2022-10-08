@@ -11,12 +11,16 @@ const prepararJson = (data: object, tanda: TANDAS_ENUM_USERS, horas_tandas: obje
     let hora_entrada    = horas_tandas[HORARIO_ENUM.HORA_ENTRADA]
     let hora_salida     = horas_tandas[HORARIO_ENUM.HORA_SALIDA]
 
-    newData['id_user']                  = idData
-    newData['tanda']                    = tanda
-    newData['date']                     = new Date(data['Record date'])
-    newData[HORARIO_ENUM.HORA_ENTRADA]  = new Date(data['Record date']+" "+hora_entrada)
-    newData[HORARIO_ENUM.HORA_SALIDA]   = new Date(data['Record date']+" "+hora_salida)
-    return newData
+    if(idData){
+        newData['id_user']                  = idData
+        newData['tanda']                    = tanda
+        newData['date']                     = new Date(data['Record date'])
+        newData[HORARIO_ENUM.HORA_ENTRADA]  = new Date(data['Record date']+" "+hora_entrada)
+        newData[HORARIO_ENUM.HORA_SALIDA]   = new Date(data['Record date']+" "+hora_salida)
+        return newData
+    }
+    console.log('Algo malo en prepararJson')
+    return false
 }
 
 
@@ -89,13 +93,15 @@ const comprobar_tandas = (arr: Array<string>, tanda: TANDAS_ENUM_USERS) => {
 
 const createRegistrosApi = async(data: object) => {
     try{
-        const url = `${URL_API}/api/v1/registros`
+        const url = `${URL_API}/api/v1/registro`
         await axios.post(url, data)
     }catch(error){
-        console.log(error)
+        //console.log(error)
+        // Estancia este error para que sea de Axios y poder imprimir solo el mensaje de error
+        console.log('Error con la peticion Axios')
     }
     finally{
-        console.log('Se publico bien => ', data)
+        console.log('Peticion por Axios')
     }
 }
 
@@ -117,12 +123,16 @@ export const leerExcel = async(ruta: string) => {
         const tanda_matutina = comprobar_tandas(fechas, TANDAS_ENUM_USERS.MATUTINA)
         if(tanda_matutina){
             const data = prepararJson(jsonDATA, TANDAS_ENUM_USERS.MATUTINA, tanda_matutina)
-            await createRegistrosApi(data)
+            if(data){
+                await createRegistrosApi(data)
+            }
         }
         const tanda_vespertina = comprobar_tandas(fechas, TANDAS_ENUM_USERS.VESPERTINA)
         if(tanda_vespertina){
             const data = prepararJson(jsonDATA, TANDAS_ENUM_USERS.VESPERTINA, tanda_vespertina)
-            await createRegistrosApi(data)
+            if(data){
+                await createRegistrosApi(data)
+            }
         }
     })
 }
