@@ -1,6 +1,6 @@
 import {prop, getModelForClass, modelOptions, Ref} from '@typegoose/typegoose'
 import {User} from '../user/users.model'
-import {Departamento_Users, Tandas_Users} from '../../libs/Enums'
+import {Departamento_Users, TANDAS_ENUM_USERS} from '../../libs/Enums'
 
 @modelOptions({schemaOptions: {timestamps: true}})
 export class Registro {
@@ -8,7 +8,7 @@ export class Registro {
     @prop({required: true}) //Mongoose
     date: Date      //TypeScript
 
-    @prop({required: true, enum: Tandas_Users})
+    @prop({required: true, enum: TANDAS_ENUM_USERS})
     tanda: string
 
     @prop({required: true})

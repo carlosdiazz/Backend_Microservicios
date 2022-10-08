@@ -1,7 +1,6 @@
 import boom from '@hapi/boom'
 import moment from 'moment'
 
-
 export const calculoDeHora = async(hora_entrada: Date, hora_salida: Date) => {
     const hora_1 = moment(hora_entrada)
     const hora_2 = moment(hora_salida)

@@ -1,5 +1,5 @@
 import {z} from 'zod';
-import {Tandas_Users} from '../../libs/Enums'
+import {TANDAS_ENUM_USERS} from '../../libs/Enums'
 
 const id = z.string({required_error: "Este no es un ID valido"}).regex(/^[0-9a-fA-F]{24}$/);
 const id_user = z.string({required_error: "Este no es un ID valido"}).regex(/^[0-9a-fA-F]{24}$/);
@@ -9,7 +9,7 @@ const date = z.preprocess((arg) => {
   }, z.date());//!Falta esto
 const hora_entrada = date //!Falta esto
 const hora_salida  = date
-const tanda = z.nativeEnum(Tandas_Users)
+const tanda = z.nativeEnum(TANDAS_ENUM_USERS)
 
 export const createOneRegistro = z.object({
     body: z.object({

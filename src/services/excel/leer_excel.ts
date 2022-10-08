@@ -1,10 +1,10 @@
 import XLSX from 'xlsx'
-import {TANDAS_ENUM, HORARIO_ENUM} from './Enums'
+import {TANDAS_ENUM_USERS, HORARIO_ENUM} from '../../libs/Enums'
 import axios from 'axios';
 import {saberIdUsuario} from '../libs/saber_usuario'
-import {URL_API} from './config'
+import {URL_API} from '../../config/config'
 
-const prepararJson = (data: object, tanda: TANDAS_ENUM, horas_tandas: object, ) => {
+const prepararJson = (data: object, tanda: TANDAS_ENUM_USERS, horas_tandas: object, ) => {
 
     const newData       = {}
     const idData        = saberIdUsuario(data['Work ID'])
@@ -45,12 +45,12 @@ const validar_hora = (hora_a_comprobar: string, rango_inicio: number, rango_sali
     }
 }
 
-const comprobar_tandas = (arr: Array<string>, tanda: TANDAS_ENUM) => {
+const comprobar_tandas = (arr: Array<string>, tanda: TANDAS_ENUM_USERS) => {
 
     let hora_entrada;
     let hora_salida;
 
-    if(tanda === TANDAS_ENUM.MATUTINA) {
+    if(tanda === TANDAS_ENUM_USERS.MATUTINA) {
         for(let i of arr){
             if(!hora_entrada){
                 hora_entrada      = validar_hora(i, 7, 9)
@@ -63,7 +63,7 @@ const comprobar_tandas = (arr: Array<string>, tanda: TANDAS_ENUM) => {
             hora_salida = "12:00"
         }
     }
-    if(tanda === TANDAS_ENUM.VESPERTINA) {
+    if(tanda === TANDAS_ENUM_USERS.VESPERTINA) {
         for(let i of arr){
             if(!hora_entrada){
                 hora_entrada     = validar_hora(i, 13,15 )
@@ -89,7 +89,8 @@ const comprobar_tandas = (arr: Array<string>, tanda: TANDAS_ENUM) => {
 
 const createRegistrosApi = async(data: object) => {
     try{
-        await axios.post(URL_API, data)
+        const url = `${URL_API}/api/v1/registros`
+        await axios.post(url, data)
     }catch(error){
         console.log(error)
     }
@@ -113,14 +114,14 @@ export const leerExcel = async(ruta: string) => {
     dataExcel.forEach(async(data) => {
         jsonDATA = data as object
         const fechas = sacarFechasDelObject( jsonDATA)
-        const tanda_matutina = comprobar_tandas(fechas, TANDAS_ENUM.MATUTINA)
+        const tanda_matutina = comprobar_tandas(fechas, TANDAS_ENUM_USERS.MATUTINA)
         if(tanda_matutina){
-            const data = prepararJson(jsonDATA, TANDAS_ENUM.MATUTINA, tanda_matutina)
+            const data = prepararJson(jsonDATA, TANDAS_ENUM_USERS.MATUTINA, tanda_matutina)
             await createRegistrosApi(data)
         }
-        const tanda_vespertina = comprobar_tandas(fechas, TANDAS_ENUM.VESPERTINA)
+        const tanda_vespertina = comprobar_tandas(fechas, TANDAS_ENUM_USERS.VESPERTINA)
         if(tanda_vespertina){
-            const data = prepararJson(jsonDATA, TANDAS_ENUM.VESPERTINA, tanda_vespertina)
+            const data = prepararJson(jsonDATA, TANDAS_ENUM_USERS.VESPERTINA, tanda_vespertina)
             await createRegistrosApi(data)
         }
     })
