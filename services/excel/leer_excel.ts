@@ -1,15 +1,24 @@
 import XLSX from 'xlsx'
+import {TANDAS_ENUM, HORARIO_ENUM} from './Enums'
+import axios from 'axios';
+import {saberIdUsuario} from '../libs/saber_usuario'
+import {URL_API} from './config'
 
-//const saberIdUsuario = (id: string) => {
-//
-//    const numero = Number(id)
-//    if(numero === 1){
-//        return "634054f796407fd5e084417a"
-//    }
-//    return id
-//
-//}
-//
+const prepararJson = (data: object, tanda: TANDAS_ENUM, horas_tandas: object, ) => {
+
+    const newData       = {}
+    const idData        = saberIdUsuario(data['Work ID'])
+    let hora_entrada    = horas_tandas[HORARIO_ENUM.HORA_ENTRADA]
+    let hora_salida     = horas_tandas[HORARIO_ENUM.HORA_SALIDA]
+
+    newData['id_user']                  = idData
+    newData['tanda']                    = tanda
+    newData['date']                     = new Date(data['Record date'])
+    newData[HORARIO_ENUM.HORA_ENTRADA]  = new Date(data['Record date']+" "+hora_entrada)
+    newData[HORARIO_ENUM.HORA_SALIDA]   = new Date(data['Record date']+" "+hora_salida)
+    return newData
+}
+
 
 //? Con esta funcion saco las fechas del objecto y la junto en un arreglo
 const sacarFechasDelObject = (arreglo: object) => {
@@ -24,55 +33,6 @@ const sacarFechasDelObject = (arreglo: object) => {
     return horas
 }
 
-//const createRegistros = async(data) => {
-//    try{
-//        //console.log(data)
-//        //console.log(JSON.stringify(data))
-//        const url = 'http://localhost:4300/api/v1/registro'
-//        const params = {
-//            method : 'POST',
-//            headers: {
-//                "Content-Type": "application/json"
-//            },
-//            body: JSON.stringify(data)
-//        }
-//
-//        const response = await fetch(url, params)
-//        const result = await response.json()
-//        if(result.statusCode !== 201){
-//            throw Error(result.message)
-//        }
-//        console.log('Se mando bien')
-//    }catch(err){
-//        console.log(err)
-//    }
-//}
-
-
-//const prepararJson = (data: object) => {
-//
-//    const newData = {}
-//    const idData = saberIdUsuario(data['Work ID'])
-//    let hora_entrada : string
-//    let hora_salida : string
-//
-//    if(data['1'] === '00:00'){
-//        hora_entrada = data['2']
-//        hora_salida  = data['3']
-//
-//    }else{
-//        hora_entrada = data['1']
-//        hora_salida  = data['2']
-//    }
-//
-//    newData['id_user'] = idData
-//    newData['tanda'] = "MATUTINA"
-//    newData['hora_entrada'] = new Date(data['Record date']+" "+hora_entrada)
-//    newData['hora_salida'] = new Date(data['Record date']+" "+hora_salida)
-//    newData['date'] = new Date(data['Record date'])
-//    return newData
-//}
-
 //? Con esta funcion voy a validar las hora que se van a registrar.. la comparo con un de inicio y una final
 const validar_hora = (hora_a_comprobar: string, rango_inicio: number, rango_salida: number) => {
 
@@ -85,74 +45,86 @@ const validar_hora = (hora_a_comprobar: string, rango_inicio: number, rango_sali
     }
 }
 
-const comprobar_tandas = (arr: Array<string>) => {
+const comprobar_tandas = (arr: Array<string>, tanda: TANDAS_ENUM) => {
 
-    let hora_inicio_matutino;
-    let hora_final_matutitno;
-    let hora_inicio_vesrpertino;
-    let hora_final_vespertino;
+    let hora_entrada;
+    let hora_salida;
 
-    for(let i of arr){
-        if(!hora_inicio_matutino){
-            hora_inicio_matutino      = validar_hora(i, 7, 9)
+    if(tanda === TANDAS_ENUM.MATUTINA) {
+        for(let i of arr){
+            if(!hora_entrada){
+                hora_entrada      = validar_hora(i, 7, 9)
+            }
+            if(!hora_salida){
+                hora_salida      = validar_hora(i, 11,13 )
+            }
         }
-
-        if(!hora_final_matutitno){
-            hora_final_matutitno      = validar_hora(i, 11,13 )
+        if(!hora_salida && hora_entrada){
+            hora_salida = "12:00"
         }
-
-        if(!hora_inicio_vesrpertino){
-            hora_inicio_vesrpertino   = validar_hora(i, 13,15 )
+    }
+    if(tanda === TANDAS_ENUM.VESPERTINA) {
+        for(let i of arr){
+            if(!hora_entrada){
+                hora_entrada     = validar_hora(i, 13,15 )
+            }
+            if(!hora_salida){
+                hora_salida      = validar_hora(i, 16, 20)
+            }
         }
-
-        if(!hora_final_vespertino){
-            hora_final_vespertino     = validar_hora(i, 16, 20)
+        if(!hora_salida && hora_entrada){
+            hora_salida = "17:30"
         }
     }
 
-    if(!hora_final_matutitno && hora_inicio_matutino) {
-        hora_final_matutitno="12:00"
+    if(hora_entrada && hora_salida){
+        return {
+            'hora_entrada': hora_entrada,
+            'hora_salida': hora_salida
+        }
+    }else{
+        return false
     }
-
-    if(!hora_final_vespertino && hora_inicio_vesrpertino){
-        hora_final_vespertino="17:30"
-    }
-
-    console.log("hora_inicio_matutino    => ",hora_inicio_matutino)
-    console.log("hora_final_matutitno    => ",hora_final_matutitno)
-    console.log("hora_inicio_vesrpertino => ",hora_inicio_vesrpertino)
-    console.log("hora_final_vespertino   => ",hora_final_vespertino)
 }
 
-//?Con esta funcion saco el excel de los datos
-const leerExcel = async(ruta: string) => {
+const createRegistrosApi = async(data: object) => {
     try{
-        const libro = XLSX.readFile(ruta);
-        const TodasHojas = libro.SheetNames;
-        const hojaUna = TodasHojas[0]
-        const dataExcel = XLSX.utils.sheet_to_json(libro.Sheets[hojaUna])
-
-        let json;
-
-        dataExcel.forEach(async(data) => {
-            //console.log(data)
-            json = data as object
-            //console.log(json)
-            //console.log(prepararJson(json))
-            const fechas = sacarFechasDelObject( json)
-            console.log(fechas)
-            comprobar_tandas(fechas)
-            //console.log(fechas)
-            //await createRegistros(prepararJson(json))
-        })
-
+        await axios.post(URL_API, data)
     }catch(error){
-        console.log('AQQU')
         console.log(error)
     }
+    finally{
+        console.log('Se publico bien => ', data)
+    }
+}
 
+//!Falta esto
+//!Quede donde colcoar el try catch pppara evitar que se duplique el envio de dato
+//!Crear una cola al momento que se envie un dato a guardar
+
+//?Con esta funcion saco el excel de los datos
+export const leerExcel = async(ruta: string) => {
+
+    const libro = XLSX.readFile(ruta);
+    const TodasHojas = libro.SheetNames;
+    const hojaUna = TodasHojas[0]
+    const dataExcel = XLSX.utils.sheet_to_json(libro.Sheets[hojaUna])
+    let jsonDATA: object;
+    dataExcel.forEach(async(data) => {
+        jsonDATA = data as object
+        const fechas = sacarFechasDelObject( jsonDATA)
+        const tanda_matutina = comprobar_tandas(fechas, TANDAS_ENUM.MATUTINA)
+        if(tanda_matutina){
+            const data = prepararJson(jsonDATA, TANDAS_ENUM.MATUTINA, tanda_matutina)
+            await createRegistrosApi(data)
+        }
+        const tanda_vespertina = comprobar_tandas(fechas, TANDAS_ENUM.VESPERTINA)
+        if(tanda_vespertina){
+            const data = prepararJson(jsonDATA, TANDAS_ENUM.VESPERTINA, tanda_vespertina)
+            await createRegistrosApi(data)
+        }
+    })
 }
 
 const ruta = './probar.xlsx'
-
 leerExcel(ruta)

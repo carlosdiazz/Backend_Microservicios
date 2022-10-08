@@ -4,8 +4,6 @@ import RegistroModel from './registro.model'
 import {successResponse} from '../../libs/response'
 import {comprobarUser} from '../../libs/ComprobarClaveSecundaria'
 import {calculoDeHora} from '../../libs/CalculoDeHora'
-import moment from 'moment'
-
 
 export const getOneRegistro = async(req:Request, res: Response, next: NextFunction ) => {
     try{
@@ -15,10 +13,6 @@ export const getOneRegistro = async(req:Request, res: Response, next: NextFuncti
             throw boom.notFound("Este regsitro no fue encontrado")
         }
 
-        const hora_1 = moment(user.hora_entrada)
-        const hora_2 = moment(user.hora_salida)
-        console.log(hora_1.format('YYYY-MM-DD HH:mm:ss'))
-        console.log(hora_2.format('YYYY-MM-DD HH:mm:ss'))
         successResponse(req,res, user, 'Lista de un registro', 200)
     }catch(err){
         next(err)
@@ -43,6 +37,13 @@ export const createRegistro = async(req:Request, res: Response, next: NextFuncti
 
         await comprobarUser(id_user)
 
+        const validar_que_exista = await RegistroModel.findOne({id_user, tanda, date })
+
+        if(validar_que_exista){
+            throw boom.badData("Ya existe un registro con estos datos")
+        }
+
+        //!Falta esto arregalr el formato y calculo de hora 
         const calculo_hora = await calculoDeHora(hora_entrada, hora_salida)
 
         const newRegistro = new RegistroModel({
