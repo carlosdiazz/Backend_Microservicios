@@ -1,7 +1,7 @@
 _id: req_17daf40a280a4d8b986e32b546595a05
 type: Request
 parentId: fld_641df6677c0e449abad1b87a2b399820
-modified: 1665104919356
+modified: 1665202051281
 created: 1665096075370
 url: "{{ _.URL_DEV }}/api/v1/registro"
 name: createRegistros
@@ -11,11 +11,11 @@ body:
   mimeType: application/json
   text: |-
     {
-    	"date":"10-10-2010",
+    	"date":"12-10-2010",
     	"tanda":"MATUTINA",
-    	"hora_entrada":"08:10",
-    	"hora_salida":"12:20",
-    	"id_user":"633f7a217402ff0746495502"
+    	"hora_entrada":"10-10-2010 08:10",
+    	"hora_salida":"10-10-2010 12:25",
+    	"id_user":"6340f37bcecbf6420c2312c2"
     }
 parameters: []
 headers:
