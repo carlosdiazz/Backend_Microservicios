@@ -36,3 +36,9 @@ export const getOneRegistro = z.object({
         id: id
     })
 })
+
+export const getAllRegistro = z.object({
+    query: z.object({
+        id_user: id_user.optional()
+    })
+})

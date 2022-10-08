@@ -1,6 +1,6 @@
 import XLSX from 'xlsx'
 import {TANDAS_ENUM_USERS, HORARIO_ENUM} from '../../libs/Enums'
-import axios from 'axios';
+import axios,{AxiosError} from 'axios';
 import {saberIdUsuario} from '../libs/saber_usuario'
 import {URL_API} from '../../config/config'
 
@@ -98,6 +98,10 @@ const createRegistrosApi = async(data: object) => {
     }catch(error){
         //console.log(error)
         // Estancia este error para que sea de Axios y poder imprimir solo el mensaje de error
+        if(error instanceof AxiosError){
+            console.log(error.message)
+            console.log(error.response?.data)
+        }
         console.log('Error con la peticion Axios')
     }
     finally{

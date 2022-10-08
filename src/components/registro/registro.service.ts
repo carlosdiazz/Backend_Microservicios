@@ -21,7 +21,15 @@ export const getOneRegistro = async(req:Request, res: Response, next: NextFuncti
 
 export const getAllRegistro = async(req:Request, res: Response, next: NextFunction ) => {
     try{
-        const registros = await RegistroModel.find().populate('id_user','name ')
+
+        let filter = {}
+        const {id_user} = req.query
+
+        if(id_user){
+            filter['id_user']=id_user
+        }
+
+        const registros = await RegistroModel.find(filter).populate('id_user','name ')
         if(!registros){
             throw boom.badData("Error al buscar los registro")
         }
