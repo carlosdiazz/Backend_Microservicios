@@ -1,7 +1,7 @@
 _id: req_426346f06f8f4b7e8c7f94407faf7f05
 type: Request
 parentId: fld_fffa57437f794bebba5fbcf86dac2c77
-modified: 1665205547926
+modified: 1665437354966
 created: 1665095901044
 url: "{{ _.URL_DEV }}/api/v1/users/"
 name: createUser
@@ -11,8 +11,8 @@ body:
   mimeType: application/json
   text: |-
     {
-    	"name" : "Carlos Jose 4",
-    	"cedula":4019120378624,
+    	"name" : "Tomasina",
+    	"cedula":403192120378624,
     	"departamento":"DOCENTES"
     }
 parameters: []

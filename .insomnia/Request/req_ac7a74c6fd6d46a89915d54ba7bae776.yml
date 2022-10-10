@@ -1,9 +1,9 @@
 _id: req_ac7a74c6fd6d46a89915d54ba7bae776
 type: Request
 parentId: fld_641df6677c0e449abad1b87a2b399820
-modified: 1665204685880
+modified: 1665437240713
 created: 1665096066318
-url: "{{ _.URL_DEV }}/api/v1/registro/6340fb0189aa7aae94edc2d0"
+url: "{{ _.URL_DEV }}/api/v1/registro/63448bee5b4255fbbb733ffd"
 name: deleteRegistros
 description: ""
 method: DELETE

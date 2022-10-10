@@ -1,7 +1,7 @@
 _id: req_17daf40a280a4d8b986e32b546595a05
 type: Request
 parentId: fld_641df6677c0e449abad1b87a2b399820
-modified: 1665202051281
+modified: 1665430227088
 created: 1665096075370
 url: "{{ _.URL_DEV }}/api/v1/registro"
 name: createRegistros
