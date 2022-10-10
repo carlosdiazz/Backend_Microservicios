@@ -8,7 +8,7 @@ const registroRouter = Router()
 
 registroRouter.get(
     '/',
-    //validarSchemas(registroSchema.)
+    validarSchemas(registroSchema.getAllRegistro),
     registroService.getAllRegistro
 )
 

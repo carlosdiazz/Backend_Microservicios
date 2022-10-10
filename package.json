@@ -6,7 +6,8 @@
   "scripts": {
     "build": "tsc",
     "start": "node build/index.js",
-    "dev": "ts-node-dev --respawn src/index.ts"
+    "dev": "ts-node-dev --respawn src/index.ts",
+    "prueba": "sudo npx ts-node-dev src/services/excel/leer_excel.ts"
   },
   "keywords": [],
   "author": "",

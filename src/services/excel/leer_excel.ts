@@ -3,37 +3,54 @@ import {TANDAS_ENUM_USERS, HORARIO_ENUM} from '../../libs/Enums'
 import axios,{AxiosError} from 'axios';
 import {saberIdUsuario} from '../libs/saber_usuario'
 import {URL_API} from '../../config/config'
+export interface Registro {
+    id_user?:      string;
+    tanda?:        string;
+    date?:         Date;
+    hora_entrada?: string;
+    hora_salida?:  string;
+}
 
-const prepararJson = (data: object, tanda: TANDAS_ENUM_USERS, horas_tandas: object, ) => {
+const prepararJson = (data: any, tanda: TANDAS_ENUM_USERS, horas_tandas: object, ): Registro => {
 
     const newData       = {}
     const idData        = saberIdUsuario(data['Work ID'])
     let hora_entrada    = horas_tandas[HORARIO_ENUM.HORA_ENTRADA]
     let hora_salida     = horas_tandas[HORARIO_ENUM.HORA_SALIDA]
 
-    if(idData){
-        newData['id_user']                  = idData
-        newData['tanda']                    = tanda
-        newData['date']                     = new Date(data['Record date'])
-        newData[HORARIO_ENUM.HORA_ENTRADA]  = new Date(data['Record date']+" "+hora_entrada)
-        newData[HORARIO_ENUM.HORA_SALIDA]   = new Date(data['Record date']+" "+hora_salida)
-        return newData
-    }
-    console.log('Algo malo en prepararJson')
-    return false
+    newData['id_user']                  = idData
+    newData['tanda']                    = tanda
+    newData['date']                     = data['Record date']
+    newData[HORARIO_ENUM.HORA_ENTRADA]  = data['Record date'] + " " +hora_entrada
+    newData[HORARIO_ENUM.HORA_SALIDA]   = data['Record date'] + " " +hora_salida
+    return newData
+    // if(idData){
+    // }
+    // console.log('Algo malo en prepararJson')
+
 }
 
-
 //? Con esta funcion saco las fechas del objecto y la junto en un arreglo
-const sacarFechasDelObject = (arreglo: object) => {
+const sacarFechasDelObject = (object: {}) => {
 
     let horas:Array<string> = []
+    for (const key in object) {
+        const value = object[key];
+        if(!(Number.isNaN(Number(key))) && value && value !== '00:00'){
+            horas.push(object[key])
 
-    for(let i = 1 ; i < 8 ; i++ ) {
-        if(arreglo[i] && arreglo[i] !== '00:00'){
-            horas.push(arreglo[i])
         }
     }
+// ((prop)=>{
+//         if(arreglo[i] && arreglo[i] !== '00:00'){
+//             horas.push(arreglo[i])
+//         }
+//     });
+//     for(let i = 1 ; i < 8 ; i++ ) {
+//         if(arreglo[i] && arreglo[i] !== '00:00'){
+//             horas.push(arreglo[i])
+//         }
+//     }
     return horas
 }
 
@@ -92,21 +109,16 @@ const comprobar_tandas = (arr: Array<string>, tanda: TANDAS_ENUM_USERS) => {
 }
 
 const createRegistrosApi = async(data: object) => {
-    try{
-        const url = `${URL_API}/api/v1/registro`
-        await axios.post(url, data)
-    }catch(error){
-        //console.log(error)
-        // Estancia este error para que sea de Axios y poder imprimir solo el mensaje de error
-        if(error instanceof AxiosError){
-            console.log(error.message)
-            console.log(error.response?.data)
-        }
-        console.log('Error con la peticion Axios')
-    }
-    finally{
-        console.log('Peticion por Axios')
-    }
+   try{
+       const url = `${URL_API}/api/v1/registro`
+       await axios.post(url, data)
+   }catch(error){
+       if(error instanceof AxiosError){
+           console.log(error.message)
+           console.log(error.response?.data)
+       }
+       console.log('Error con la peticion Axios')
+   }
 }
 
 //!Falta esto
@@ -119,21 +131,23 @@ export const leerExcel = async(ruta: string) => {
     const libro = XLSX.readFile(ruta);
     const TodasHojas = libro.SheetNames;
     const hojaUna = TodasHojas[0]
-    const dataExcel = XLSX.utils.sheet_to_json(libro.Sheets[hojaUna])
-    let jsonDATA: object;
-    dataExcel.forEach(async(data) => {
-        jsonDATA = data as object
-        const fechas = sacarFechasDelObject( jsonDATA)
-        const tanda_matutina = comprobar_tandas(fechas, TANDAS_ENUM_USERS.MATUTINA)
+    const dataExcel = XLSX.utils.sheet_to_json<Registro>(libro.Sheets[hojaUna])
+
+    dataExcel.forEach(async(excelData) => {
+
+        const arr_fechas = sacarFechasDelObject( excelData)
+        const tanda_matutina = comprobar_tandas(arr_fechas, TANDAS_ENUM_USERS.MATUTINA)
         if(tanda_matutina){
-            const data = prepararJson(jsonDATA, TANDAS_ENUM_USERS.MATUTINA, tanda_matutina)
+            const data = prepararJson(excelData, TANDAS_ENUM_USERS.MATUTINA, tanda_matutina)
+
             if(data){
                 await createRegistrosApi(data)
             }
         }
-        const tanda_vespertina = comprobar_tandas(fechas, TANDAS_ENUM_USERS.VESPERTINA)
+        const tanda_vespertina = comprobar_tandas(arr_fechas, TANDAS_ENUM_USERS.VESPERTINA)
         if(tanda_vespertina){
-            const data = prepararJson(jsonDATA, TANDAS_ENUM_USERS.VESPERTINA, tanda_vespertina)
+            const data = prepararJson(excelData, TANDAS_ENUM_USERS.VESPERTINA, tanda_vespertina)
+
             if(data){
                 await createRegistrosApi(data)
             }
