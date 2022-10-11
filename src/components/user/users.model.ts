@@ -8,11 +8,14 @@ export class User {
     name: string      //TypeScript
 
     @prop({required: true, unique: true})
-    cedula: number
+    cedula: string
 
+    @prop({required: true, unique: true})
+    id_anterior: string
 
     @prop({required: true, enum: Departamento_Users})
     departamento: Departamento_Users
+
 
 }
 

@@ -33,12 +33,13 @@ export const getAllUsers = async(req:Request, res: Response, next: NextFunction 
 export const createUser = async(req:Request, res: Response, next: NextFunction ) => {
     try{
 
-        const {name, cedula, departamento} = req.body
+        const {name, cedula, departamento, id_anterior} = req.body
 
         const newUser = new UserModel({
             name: name,
             cedula: cedula,
-            departamento: departamento
+            departamento: departamento,
+            id_anterior: id_anterior
         })
 
         const userSaved = await newUser.save()
@@ -54,7 +55,7 @@ export const createUser = async(req:Request, res: Response, next: NextFunction )
 export const updateUser = async(req:Request, res: Response, next: NextFunction ) => {
     try{
         const {id} = req.params
-        const {name, cedula, departamento} = req.body
+        const {name, cedula, departamento, id_anterior} = req.body
         const user = await UserModel.findById(id)
         if(!user){
             throw boom.notFound("Este usuario no se ecnontro")
@@ -63,7 +64,8 @@ export const updateUser = async(req:Request, res: Response, next: NextFunction )
         const userUpdate = await UserModel.findByIdAndUpdate(id, {
             name: name,
             cedula: cedula,
-            departamento: departamento
+            departamento: departamento,
+            id_anterior: id_anterior
         },{new: true})
 
         if(!userUpdate){
