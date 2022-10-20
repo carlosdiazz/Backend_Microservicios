@@ -25,4 +25,4 @@ Este sera un proyecto de prueba de un backend, Usaremos las siguientes tencologi
 `$ npm run dev`
 
 
-npx ts-node-dev publicar_numeros.ts 
+npx ts-node-dev leer_excel.ts
