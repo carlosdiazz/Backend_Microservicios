@@ -23,7 +23,9 @@ export const getAllRegistro = async(req:Request, res: Response, next: NextFuncti
     try{
 
         let filter = {}
+        let ordenar = {}
         const {id_user, date_inicial, date_final} = req.query
+        ordenar['date']=1
         if(id_user){
             filter['id_user']=id_user
         }
@@ -35,7 +37,7 @@ export const getAllRegistro = async(req:Request, res: Response, next: NextFuncti
             }
         }
 
-        const registros = await RegistroModel.find(filter).populate('id_user','name ')
+        const registros = await RegistroModel.find(filter).populate('id_user','name ').sort(ordenar)
         if(!registros){
             throw boom.badData("Error al buscar los registro")
         }

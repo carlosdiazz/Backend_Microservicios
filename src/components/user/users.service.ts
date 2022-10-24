@@ -46,7 +46,7 @@ export const createUser = async(req:Request, res: Response, next: NextFunction )
         if(!userSaved){
             throw boom.badData("No se pudo gurdar el usurio")
         }
-        successResponse(req,res, userSaved, 'Crear un usuarios', 200)
+        successResponse(req,res, userSaved, 'Crear un usuarios', 201)
     }catch(err){
         next(err)
     }
