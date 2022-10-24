@@ -1,7 +1,7 @@
 _id: req_0becea4119bb458e8a0a8f01276dea36
 type: Request
 parentId: fld_61d09aa989524a3dbf884e5845137e4d
-modified: 1665095791456
+modified: 1666627093085
 created: 1663986692762
 url: "{{ _.URL_DEV }}/api/v1/auth/login"
 name: Login
@@ -12,7 +12,7 @@ body:
   text: |-
     {
     	"nickname":"carlos",
-    	"password":"12345678"
+    	"password":"12345d678"
     }
 parameters: []
 headers:
