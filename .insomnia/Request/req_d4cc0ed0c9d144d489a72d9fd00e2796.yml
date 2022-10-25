@@ -1,11 +1,9 @@
-_id: req_ac1f704917f6482ab6db1136ee4ed424
+_id: req_d4cc0ed0c9d144d489a72d9fd00e2796
 type: Request
 parentId: fld_641df6677c0e449abad1b87a2b399820
-modified: 1666647827811
-created: 1665437223568
-url: "{{ _.URL_DEV
-  }}/api/v1/registro?date_inicial=2022-01-01&date_final=2022-04-19&id_user=6351\
-  561c951c88cb1a0e75f7"
+modified: 1666275589975
+created: 1666275531323
+url: "{{ _.URL_DEV }}/api/v1/registro?date_inicial=2022-04-04&date_final=2022-04-06"
 name: getAllRegistrosQuery
 description: ""
 method: GET
@@ -13,7 +11,7 @@ body: {}
 parameters: []
 headers: []
 authentication: {}
-metaSortKey: -1665095970158.5
+metaSortKey: -1665095947360.75
 isPrivate: false
 settingStoreCookies: true
 settingSendCookies: true
