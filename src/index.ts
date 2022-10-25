@@ -6,7 +6,8 @@ const main = async ()=>{
     try{
         console.log(`🔥🔥🔥🔥🔥Subiendo el servidor🔥🔥🔥🔥🔥`)
         await connectMongoDb()
-        app.listen(PORT_APP, ()=>{
+        app.listen(PORT_APP as number,"0.0.0.0" ,() => {
+            //console.log(`👍El server esta arriba en el puerto: ${PORT_APP} 👍💪`)
             console.log(`👍El server esta arriba en el puerto: ${PORT_APP} 👍💪`)
         })
     }catch(error){
