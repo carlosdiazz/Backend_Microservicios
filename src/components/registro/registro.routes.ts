@@ -11,6 +11,11 @@ registroRouter.get(
     validarSchemas(registroSchema.getAllRegistro),
     registroService.getAllRegistro
 )
+registroRouter.get(
+    '/id_anterior/:id_anterior',
+    //validarSchemas(registroSchema.getOneRegistro),
+    registroService.getIdOneRegistro
+)
 
 registroRouter.get(
     '/:id',

@@ -1,6 +1,7 @@
 import boom from '@hapi/boom'
 import {Request,Response, NextFunction} from 'express'
 import RegistroModel from './registro.model'
+import UserModel from '../user/users.model'
 import {successResponse} from '../../libs/response'
 import {comprobarUser} from '../../libs/ComprobarClaveSecundaria'
 import {calculoDeHora} from '../../libs/CalculoDeHora'
@@ -19,17 +20,31 @@ export const getOneRegistro = async(req:Request, res: Response, next: NextFuncti
     }
 }
 
+export const getIdOneRegistro = async(req:Request, res: Response, next: NextFunction ) => {
+    try{
+        const {id_anterior} = req.params
+        const user = await UserModel.findOne({id_anterior : id_anterior})
+        if(!user){
+            throw boom.notFound(`Este regsitro ${id_anterior} no fue encontrado`)
+        }
+
+        successResponse(req,res, user, 'Lista de un registro', 200)
+    }catch(err){
+        next(err)
+    }
+}
+
 export const getAllRegistro = async(req:Request, res: Response, next: NextFunction ) => {
     try{
 
         let filter = {}
         let ordenar = {}
         const {id_user, date_inicial, date_final} = req.query
+        ordenar['id_user']=1
         ordenar['date']=1
         if(id_user){
             filter['id_user']=id_user
         }
-
         if(date_inicial as string && date_final as string){
             filter['date'] = {
                 $gte: new Date(date_inicial as string),
@@ -37,7 +52,7 @@ export const getAllRegistro = async(req:Request, res: Response, next: NextFuncti
             }
         }
 
-        const registros = await RegistroModel.find(filter).populate('id_user','name ').sort(ordenar)
+        const registros = await RegistroModel.find(filter).sort(ordenar).populate('id_user','name ')
         if(!registros){
             throw boom.badData("Error al buscar los registro")
         }

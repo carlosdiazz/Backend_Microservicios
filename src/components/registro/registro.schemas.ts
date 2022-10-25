@@ -4,7 +4,7 @@ import boom from '@hapi/boom'
 
 const id = z.string({required_error: "Este no es un ID valido"}).regex(/^[0-9a-fA-F]{24}$/);
 const id_user = z.string({required_error: "Este no es un ID valido"}).regex(/^[0-9a-fA-F]{24}$/);
-
+//const id_anterior = z.string()
 
 const date = z.preprocess((arg) => {try{
     if (typeof arg == "string" || arg instanceof Date) return new Date(arg);
