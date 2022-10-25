@@ -1,7 +1,7 @@
 import XLSX from 'xlsx'
 import {TANDAS_ENUM_USERS, HORARIO_ENUM} from '../../libs/Enums'
 import axios,{AxiosError} from 'axios';
-import {saberIdUsuario} from '../libs/saber_usuario'
+import {saberPorIdAnterior} from './libs/saber_usuario'
 import {URL_API} from '../../config/config'
 export interface Registro {
     id_user?:      string;
@@ -11,10 +11,10 @@ export interface Registro {
     hora_salida?:  string;
 }
 
-const prepararJson = (data: any, tanda: TANDAS_ENUM_USERS, horas_tandas: object, ): Registro => {
+const prepararJson = async(data: any, tanda: TANDAS_ENUM_USERS, horas_tandas: object, ): Promise<Registro> => {
 
     const newData       = {}
-    const idData        = saberIdUsuario(data['Work ID'])
+    const idData        = await saberPorIdAnterior(data['Work ID'])
     let hora_entrada    = horas_tandas[HORARIO_ENUM.HORA_ENTRADA]
     let hora_salida     = horas_tandas[HORARIO_ENUM.HORA_SALIDA]
 
@@ -24,10 +24,6 @@ const prepararJson = (data: any, tanda: TANDAS_ENUM_USERS, horas_tandas: object,
     newData[HORARIO_ENUM.HORA_ENTRADA]  = data['Record date'] + " " +hora_entrada
     newData[HORARIO_ENUM.HORA_SALIDA]   = data['Record date'] + " " +hora_salida
     return newData
-    // if(idData){
-    // }
-    // console.log('Algo malo en prepararJson')
-
 }
 
 //? Con esta funcion saco las fechas del objecto y la junto en un arreglo
@@ -38,19 +34,8 @@ const sacarFechasDelObject = (object: {}) => {
         const value = object[key];
         if(!(Number.isNaN(Number(key))) && value && value !== '00:00'){
             horas.push(object[key])
-
         }
     }
-// ((prop)=>{
-//         if(arreglo[i] && arreglo[i] !== '00:00'){
-//             horas.push(arreglo[i])
-//         }
-//     });
-//     for(let i = 1 ; i < 8 ; i++ ) {
-//         if(arreglo[i] && arreglo[i] !== '00:00'){
-//             horas.push(arreglo[i])
-//         }
-//     }
     return horas
 }
 
@@ -77,7 +62,7 @@ const comprobar_tandas = (arr: Array<string>, tanda: TANDAS_ENUM_USERS) => {
                 hora_entrada      = validar_hora(i, 7, 9)
             }
             if(!hora_salida){
-                hora_salida      = validar_hora(i, 11,13 )
+                hora_salida      = validar_hora(i, 11,12 )
             }
         }
         if(!hora_salida && hora_entrada){
@@ -116,14 +101,11 @@ const createRegistrosApi = async(data: object) => {
        if(error instanceof AxiosError){
            console.log(error.message)
            console.log(error.response?.data)
+       }else{
+        console.log('Error con la peticion Axios')
        }
-       console.log('Error con la peticion Axios')
    }
 }
-
-//!Falta esto
-//!Quede donde colcoar el try catch pppara evitar que se duplique el envio de dato
-//!Crear una cola al momento que se envie un dato a guardar
 
 //?Con esta funcion saco el excel de los datos
 export const leerExcel = async(ruta: string) => {
@@ -138,7 +120,7 @@ export const leerExcel = async(ruta: string) => {
         const arr_fechas = sacarFechasDelObject( excelData)
         const tanda_matutina = comprobar_tandas(arr_fechas, TANDAS_ENUM_USERS.MATUTINA)
         if(tanda_matutina){
-            const data = prepararJson(excelData, TANDAS_ENUM_USERS.MATUTINA, tanda_matutina)
+            const data = await prepararJson(excelData, TANDAS_ENUM_USERS.MATUTINA, tanda_matutina)
 
             if(data){
                 await createRegistrosApi(data)
@@ -146,7 +128,7 @@ export const leerExcel = async(ruta: string) => {
         }
         const tanda_vespertina = comprobar_tandas(arr_fechas, TANDAS_ENUM_USERS.VESPERTINA)
         if(tanda_vespertina){
-            const data = prepararJson(excelData, TANDAS_ENUM_USERS.VESPERTINA, tanda_vespertina)
+            const data = await prepararJson(excelData, TANDAS_ENUM_USERS.VESPERTINA, tanda_vespertina)
 
             if(data){
                 await createRegistrosApi(data)
