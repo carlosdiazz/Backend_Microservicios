@@ -10,8 +10,10 @@ export const saberPorIdAnterior = async(data: string) => {
         if(error instanceof AxiosError){
             console.log(error.message)
             console.log(error.response?.data)
+            return false
         }else{
             console.log('Error en la peticion de saberUserId')
+            return false
         }
     }
 }

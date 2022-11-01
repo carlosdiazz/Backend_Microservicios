@@ -11,13 +11,15 @@ export interface Registro {
     hora_salida?:  string;
 }
 
-const prepararJson = async(data: any, tanda: TANDAS_ENUM_USERS, horas_tandas: object, ): Promise<Registro> => {
+const prepararJson = async(data: any, tanda: TANDAS_ENUM_USERS, horas_tandas: object, ) => {
 
     const newData       = {}
     const idData        = await saberPorIdAnterior(data['Work ID'])
     let hora_entrada    = horas_tandas[HORARIO_ENUM.HORA_ENTRADA]
     let hora_salida     = horas_tandas[HORARIO_ENUM.HORA_SALIDA]
-
+    if (idData === false) {
+        return false
+    }
     newData['id_user']                  = idData
     newData['tanda']                    = tanda
     newData['date']                     = data['Record date']
@@ -137,5 +139,5 @@ export const leerExcel = async(ruta: string) => {
     })
 }
 
-const ruta = './probar.xlsx'
+const ruta = './probar2.xlsx'
 leerExcel(ruta)
