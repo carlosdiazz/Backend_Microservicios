@@ -13,19 +13,19 @@ const date = z.preprocess((arg) => {try{
     throw boom.badData("No es una fecha valida")
 }}, z.date());//!Falta esto
 
-const hora_entrada = date
-
-const hora_salida  = date
-
 const tanda = z.nativeEnum(TANDAS_ENUM_USERS)
+
+const tandas =z.object({
+    tanda: tanda,
+    hora_entrada: date,
+    hora_salida: date
+})
 
 export const createOneRegistro = z.object({
     body: z.object({
         id_user: id_user,
         date: date,
-        tanda: tanda,
-        hora_entrada: hora_entrada,
-        hora_salida: hora_salida
+        tandas: tandas,
     })
 })
 

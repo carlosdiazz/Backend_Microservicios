@@ -1,36 +1,11 @@
-import XLSX from 'xlsx'
+//import XLSX from 'xlsx'
 import {TANDAS_ENUM_USERS, HORARIO_ENUM} from '../../libs/Enums'
 import axios,{AxiosError} from 'axios';
 import {saberPorIdAnterior} from './libs/saber_usuario'
 import {URL_API} from '../../config/config'
-export interface Registro {
-    id_user?:      string;
-    tanda?:        string;
-    date?:         Date;
-    hora_entrada?: string;
-    hora_salida?:  string;
-}
 
-const prepararJson = async(data: any, tanda: TANDAS_ENUM_USERS, horas_tandas: object, ) => {
-
-    const newData       = {}
-    const idData        = await saberPorIdAnterior(data['Work ID'])
-    let hora_entrada    = horas_tandas[HORARIO_ENUM.HORA_ENTRADA]
-    let hora_salida     = horas_tandas[HORARIO_ENUM.HORA_SALIDA]
-    if (idData === false) {
-        return false
-    }
-    newData['id_user']                  = idData
-    newData['tanda']                    = tanda
-    newData['date']                     = data['Record date']
-    newData[HORARIO_ENUM.HORA_ENTRADA]  = data['Record date'] + " " +hora_entrada
-    newData[HORARIO_ENUM.HORA_SALIDA]   = data['Record date'] + " " +hora_salida
-    return newData
-}
-
-//? Con esta funcion saco las fechas del objecto y la junto en un arreglo
-const sacarFechasDelObject = (object: {}) => {
-
+//? Con esta funcion sacos las fechas del objecto y las juntos en un arreglos
+export const sacarFechasDelObject = (object: {}) => {
     let horas:Array<string> = []
     for (const key in object) {
         const value = object[key];
@@ -41,19 +16,7 @@ const sacarFechasDelObject = (object: {}) => {
     return horas
 }
 
-//? Con esta funcion voy a validar las hora que se van a registrar.. la comparo con un de inicio y una final
-const validar_hora = (hora_a_comprobar: string, rango_inicio: number, rango_salida: number) => {
-
-    const hora_a_verificar = Number(hora_a_comprobar.slice(0,2))
-    if(hora_a_verificar >= rango_inicio && hora_a_verificar <= rango_salida){
-        return hora_a_comprobar
-    }
-    else{
-        return false
-    }
-}
-
-const comprobar_tandas = (arr: Array<string>, tanda: TANDAS_ENUM_USERS) => {
+export const comprobar_tandas = (arr: Array<string>, tanda: TANDAS_ENUM_USERS) => {
 
     let hora_entrada;
     let hora_salida;
@@ -95,7 +58,42 @@ const comprobar_tandas = (arr: Array<string>, tanda: TANDAS_ENUM_USERS) => {
     }
 }
 
-const createRegistrosApi = async(data: object) => {
+//? Con esta funcion voy a validar las hora que se van a registrar.. la comparo con un de inicio y una final
+export const validar_hora = (hora_a_comprobar: string, rango_inicio: number, rango_salida: number) => {
+
+    const hora_a_verificar = Number(hora_a_comprobar.slice(0,2))
+    if(hora_a_verificar >= rango_inicio && hora_a_verificar <= rango_salida){
+        return hora_a_comprobar
+    }
+    else{
+        return false
+    }
+}
+
+export const prepararJson = async(data: any, tanda: TANDAS_ENUM_USERS, horas_tandas: object, ) => {
+
+    const newData       = {}
+    const idData        = await saberPorIdAnterior(data['Work ID'])
+    let hora_entrada    = horas_tandas[HORARIO_ENUM.HORA_ENTRADA]
+    let hora_salida     = horas_tandas[HORARIO_ENUM.HORA_SALIDA]
+    if (idData === false) {
+        console.log(`ESTE ID NO EXISTE => ${data['Work ID']}`)
+        return false
+    }
+    const tandas = {
+        "tanda": tanda,
+        "hora_entrada": data['Record date'] + " " +hora_entrada,
+        "hora_salida" : data['Record date'] + " " +hora_salida,
+    }
+    newData["date"]     = data['Record date']
+    newData['id_user']  = idData
+    //newData['tanda']    = tanda
+    newData['tandas']   = tandas
+
+    return newData
+}
+
+export const createRegistrosApi = async(data: object) => {
    try{
        const url = `${URL_API}/api/v1/registro`
        await axios.post(url, data)
@@ -108,36 +106,3 @@ const createRegistrosApi = async(data: object) => {
        }
    }
 }
-
-//?Con esta funcion saco el excel de los datos
-export const leerExcel = async(ruta: string) => {
-
-    const libro = XLSX.readFile(ruta);
-    const TodasHojas = libro.SheetNames;
-    const hojaUna = TodasHojas[0]
-    const dataExcel = XLSX.utils.sheet_to_json<Registro>(libro.Sheets[hojaUna])
-
-    dataExcel.forEach(async(excelData) => {
-
-        const arr_fechas = sacarFechasDelObject( excelData)
-        const tanda_matutina = comprobar_tandas(arr_fechas, TANDAS_ENUM_USERS.MATUTINA)
-        if(tanda_matutina){
-            const data = await prepararJson(excelData, TANDAS_ENUM_USERS.MATUTINA, tanda_matutina)
-
-            if(data){
-                await createRegistrosApi(data)
-            }
-        }
-        const tanda_vespertina = comprobar_tandas(arr_fechas, TANDAS_ENUM_USERS.VESPERTINA)
-        if(tanda_vespertina){
-            const data = await prepararJson(excelData, TANDAS_ENUM_USERS.VESPERTINA, tanda_vespertina)
-
-            if(data){
-                await createRegistrosApi(data)
-            }
-        }
-    })
-}
-
-const ruta = './probar2.xlsx'
-leerExcel(ruta)

@@ -4,7 +4,8 @@ import RegistroModel from './registro.model'
 import UserModel from '../user/users.model'
 import {successResponse} from '../../libs/response'
 import {comprobarUser} from '../../libs/ComprobarClaveSecundaria'
-import {calculoDeHora} from '../../libs/CalculoDeHora'
+import { calculoDeHora } from '../../libs/CalculoDeHora'
+import {agregar_tanda} from './libs.registros'
 
 export const getOneRegistro = async(req:Request, res: Response, next: NextFunction ) => {
     try{
@@ -36,7 +37,6 @@ export const getIdOneRegistro = async(req:Request, res: Response, next: NextFunc
 
 export const getAllRegistro = async(req:Request, res: Response, next: NextFunction ) => {
     try{
-
         let filter = {}
         let ordenar = {}
         const {id_user, date_inicial, date_final} = req.query
@@ -65,33 +65,50 @@ export const getAllRegistro = async(req:Request, res: Response, next: NextFuncti
 
 export const createRegistro = async(req:Request, res: Response, next: NextFunction ) => {
     try{
-        const {id_user, date, tanda, hora_entrada, hora_salida} = req.body
+        const { id_user, date, tandas} = req.body
+        const {hora_entrada, hora_salida, tanda } = tandas
         await comprobarUser(id_user)
-
-        const validar_que_exista = await RegistroModel.findOne({id_user, tanda, date })
-
-        if(validar_que_exista){
-            throw boom.badData("Ya existe un registro con estos datos")
+        if (!hora_entrada || !hora_salida || !tanda) {
+            throw boom.badData("Falta algun dato en el Object de Tanda")
         }
 
-        //!Falta esto arregalr el formato y calculo de hora 
-        const calculo_hora = await calculoDeHora(hora_entrada, hora_salida)
+        const agregar_solo_tanda = await RegistroModel.findOne({ id_user, date })
+        if (agregar_solo_tanda) {
+            const calculo_hora = await calculoDeHora(new Date(hora_entrada), new Date(hora_salida))
+            const newTandasAgregar = {
+                tanda: tanda,
+                hora_entrada: new Date(hora_entrada),
+                hora_salida: new Date(hora_salida),
+                total_hora: calculo_hora
+            }
+            const arrayTandas = agregar_solo_tanda.tandas
+            const newTandas = agregar_tanda(arrayTandas, newTandasAgregar, tanda)
+            const userUpdate = await RegistroModel.findByIdAndUpdate(agregar_solo_tanda._id, {
+                tandas: newTandas
+            },{new: true})
+            if(!userUpdate){
+                throw boom.badData("No fue posible actualizar el registro")
+            }
 
-        const newRegistro = new RegistroModel({
-            date: new Date(date),
-            id_user: id_user,
-            tanda: tanda,
-            hora_entrada: new Date(hora_entrada),
-            hora_salida: new Date(hora_salida),
-            total_hora: calculo_hora
-        })
-
-        const registroSaved = await newRegistro.save()
-        if(!registroSaved){
-            throw boom.badData("Error al crear el registro")
+            successResponse(req,res, userUpdate, 'Se agrego otra tanda a un registro', 201)
+        } else {
+            const calculo_hora = await calculoDeHora(new Date(hora_entrada), new Date(hora_salida))
+            const newRegistro = new RegistroModel({
+                date: new Date(date),
+                id_user: id_user,
+                tandas: [{
+                    tanda: tanda,
+                    hora_entrada: new Date(hora_entrada),
+                    hora_salida: new Date(hora_salida),
+                    total_hora: calculo_hora
+                }],
+            })
+            const registroSaved = await newRegistro.save()
+            if(!registroSaved){
+                throw boom.badData("Error al crear el registro")
+            }
+            successResponse(req,res, registroSaved, 'Crear un registro', 201)
         }
-
-        successResponse(req,res, newRegistro, 'Crear un registro', 201)
     }catch(err){
         next(err)
     }
